@@ -1,6 +1,7 @@
 package com.example.new_gymsarround_app
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -11,8 +12,13 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,12 +43,18 @@ fun GymsScreen(){
 @Composable
 fun GymItem(gym :Gym) {
 
+    var isFavouriteState by remember { mutableStateOf(false) }
+    val icon = if (isFavouriteState){
+        Icons.Filled.Favorite
+    } else{
+        Icons.Filled.FavoriteBorder
+    }
     Card( elevation = 4.dp, modifier = Modifier.padding(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
-            GymIcon(Icons.Filled.Place , Modifier.weight(0.15f))
+            DefaultIcon(Icons.Filled.Place , Modifier.weight(0.15f), "Location Icon")
            // Spacer(modifier = Modifier.width(10.dp))
             GymDetails( gym, Modifier.weight(.70f))
-            FavouriteIcon(Modifier.weight(.15f))
+            DefaultIcon(icon ,Modifier.weight(.15f),"Favourite gym icon") {isFavouriteState=! isFavouriteState}
             /*DefaultIcon(icon , Modifier.weight(.15f),"Favourite Gym Icon"){
                 onFavouriteIconClick(gym.id ,gym.isFavourite)
             }*/
@@ -51,11 +63,17 @@ fun GymItem(gym :Gym) {
 }
 
 @Composable
-fun FavouriteIcon(modifier: Modifier) {
+fun DefaultIcon(icon :ImageVector,
+                modifier: Modifier,
+                contentDescription:String,
+                onClick: () ->Unit ={}) {
     Image(
-        imageVector = Icons.Filled.FavoriteBorder,
-        contentDescription = "Favourite Gym Icon" ,
-        modifier = modifier.padding(8.dp)
+        imageVector = icon,
+        contentDescription = contentDescription ,
+        modifier = modifier.padding(8.dp).clickable {
+            onClick() } ,
+        colorFilter = ColorFilter.tint(
+            Color.DarkGray)
         )
 }
 
@@ -74,16 +92,6 @@ Column(modifier=modifier) {
         fontWeight = FontWeight.Medium
         )
 }
-}
-
-
-@Composable
-fun GymIcon(vector: ImageVector, modifier: Modifier) {
-    Image(imageVector = vector,
-        contentDescription ="GymIcon",
-        modifier=modifier,
-        colorFilter = ColorFilter.tint(
-            Color.DarkGray))
 }
 
 
