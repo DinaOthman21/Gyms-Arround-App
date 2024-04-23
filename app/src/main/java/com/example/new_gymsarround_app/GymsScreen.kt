@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +21,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.new_gymsarround_app.ui.theme.New_GymsArround_AppTheme
 
 @Composable
 fun GymsScreen(){
+    val vm:GymsViewModel= viewModel ()
     LazyColumn {
-     items(listOfGyms) {gym->
+     items(vm.getGyms()) {gym->
      GymItem(gym)
  }
     }
@@ -36,14 +39,24 @@ fun GymItem(gym :Gym) {
 
     Card( elevation = 4.dp, modifier = Modifier.padding(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
-            GymIcon(Icons.Filled.Place , Modifier.weight(0.25f))
+            GymIcon(Icons.Filled.Place , Modifier.weight(0.15f))
            // Spacer(modifier = Modifier.width(10.dp))
-            GymDetails( gym, Modifier.weight(.85f))
+            GymDetails( gym, Modifier.weight(.70f))
+            FavouriteIcon(Modifier.weight(.15f))
             /*DefaultIcon(icon , Modifier.weight(.15f),"Favourite Gym Icon"){
                 onFavouriteIconClick(gym.id ,gym.isFavourite)
             }*/
         }
     }
+}
+
+@Composable
+fun FavouriteIcon(modifier: Modifier) {
+    Image(
+        imageVector = Icons.Filled.FavoriteBorder,
+        contentDescription = "Favourite Gym Icon" ,
+        modifier = modifier.padding(8.dp)
+        )
 }
 
 @Composable
