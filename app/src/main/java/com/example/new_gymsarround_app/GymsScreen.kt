@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,18 +34,21 @@ import com.example.new_gymsarround_app.ui.theme.New_GymsArround_AppTheme
 @Composable
 fun GymsScreen(){
     val vm:GymsViewModel= viewModel ()
-    LazyColumn {
-     items(vm.getGyms()) {gym->
-     GymItem(gym)
+
+    LazyColumn() {
+     items(vm.state) {gym->
+     GymItem(gym){
+          vm.taggleFavouriteState(it) }
  }
     }
+
 }
 
 @Composable
-fun GymItem(gym :Gym) {
+fun GymItem(gym :Gym ,onClick:(Int) ->Unit) {
 
     var isFavouriteState by remember { mutableStateOf(false) }
-    val icon = if (isFavouriteState){
+    val icon = if (gym.isFavourite){
         Icons.Filled.Favorite
     } else{
         Icons.Filled.FavoriteBorder
@@ -54,10 +58,8 @@ fun GymItem(gym :Gym) {
             DefaultIcon(Icons.Filled.Place , Modifier.weight(0.15f), "Location Icon")
            // Spacer(modifier = Modifier.width(10.dp))
             GymDetails( gym, Modifier.weight(.70f))
-            DefaultIcon(icon ,Modifier.weight(.15f),"Favourite gym icon") {isFavouriteState=! isFavouriteState}
-            /*DefaultIcon(icon , Modifier.weight(.15f),"Favourite Gym Icon"){
-                onFavouriteIconClick(gym.id ,gym.isFavourite)
-            }*/
+            DefaultIcon(icon ,Modifier.weight(.15f),"Favourite gym icon") {
+                onClick(gym.id)}
         }
     }
 }
@@ -70,8 +72,11 @@ fun DefaultIcon(icon :ImageVector,
     Image(
         imageVector = icon,
         contentDescription = contentDescription ,
-        modifier = modifier.padding(8.dp).clickable {
-            onClick() } ,
+        modifier = modifier
+            .padding(8.dp)
+            .clickable {
+                onClick()
+            } ,
         colorFilter = ColorFilter.tint(
             Color.DarkGray)
         )
