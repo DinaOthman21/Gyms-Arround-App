@@ -16,6 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class GymsViewModel(private val stateHandle: SavedStateHandle): ViewModel() {
     var state by mutableStateOf( emptyList<Gym>())
     private var apiService:GymsApiService
+
     private val errorHandler = CoroutineExceptionHandler{ _, throwable ->
       throwable.printStackTrace()
     }

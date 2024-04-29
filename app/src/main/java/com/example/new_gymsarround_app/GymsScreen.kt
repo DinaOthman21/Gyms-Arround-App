@@ -31,20 +31,23 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.new_gymsarround_app.ui.theme.New_GymsArround_AppTheme
 
 @Composable
-fun GymsScreen(){
+fun GymsScreen(onItemClick: (Int) -> Unit){
     val vm:GymsViewModel= viewModel ()
 
     LazyColumn() {
      items(vm.state) {gym->
-     GymItem(gym){
-          vm.taggleFavouriteState(it) }
+     GymItem(
+         gym=gym,
+         onFavouriteIconClick ={ vm.taggleFavouriteState(it) },
+         onItemClick = { id-> onItemClick(id)}
+     )
  }
     }
 
 }
 
 @Composable
-fun GymItem(gym :Gym ,onClick:(Int) ->Unit) {
+fun GymItem(gym :Gym, onFavouriteIconClick:(Int) ->Unit, onItemClick:(Int)->Unit ) {
 
     var isFavouriteState by remember { mutableStateOf(false) }
     val icon = if (gym.isFavourite){
@@ -52,13 +55,16 @@ fun GymItem(gym :Gym ,onClick:(Int) ->Unit) {
     } else{
         Icons.Filled.FavoriteBorder
     }
-    Card( elevation = 4.dp, modifier = Modifier.padding(8.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
+    Card( elevation = 4.dp,
+        modifier = Modifier.padding(8.dp).clickable
+        { onItemClick(gym.id) }) {
+        Row(verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(8.dp)) {
             DefaultIcon(Icons.Filled.Place , Modifier.weight(0.15f), "Location Icon")
            // Spacer(modifier = Modifier.width(10.dp))
             GymDetails( gym, Modifier.weight(.70f))
             DefaultIcon(icon ,Modifier.weight(.15f),"Favourite gym icon") {
-                onClick(gym.id)}
+                onFavouriteIconClick(gym.id)}
         }
     }
 }
@@ -82,8 +88,8 @@ fun DefaultIcon(icon :ImageVector,
 }
 
 @Composable
-fun GymDetails( gym:Gym ,modifier: Modifier) {
-Column(modifier=modifier) {
+fun GymDetails( gym:Gym ,modifier: Modifier , horizontalAlignment: Alignment.Horizontal= Alignment.Start) {
+Column(modifier=modifier , horizontalAlignment=horizontalAlignment) {
     Text(
         text = gym.name,
         style = MaterialTheme.typography.h5,
@@ -100,10 +106,11 @@ Column(modifier=modifier) {
 
 
 
+/*
 @Preview(name="p1",showBackground = true , showSystemUi = true)
 @Composable
 fun GymsScreenPreview(){
  New_GymsArround_AppTheme {
      GymsScreen()
  }
-}
+}*/
