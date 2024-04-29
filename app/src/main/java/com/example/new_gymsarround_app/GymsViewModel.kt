@@ -13,9 +13,10 @@ import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class GymsViewModel(private val stateHandle: SavedStateHandle): ViewModel() {
+class GymsViewModel(): ViewModel() {
     var state by mutableStateOf( emptyList<Gym>())
     private var apiService:GymsApiService
+    private var gymsDao=GymsDatabase.getDaoInstance(GymsApplication.getApplicationContext())
 
     private val errorHandler = CoroutineExceptionHandler{ _, throwable ->
       throwable.printStackTrace()
@@ -36,45 +37,54 @@ class GymsViewModel(private val stateHandle: SavedStateHandle): ViewModel() {
     }
 
     private fun getGyms(){
- viewModelScope.launch( errorHandler) {
-         val gyms=getGymsFromRemoteDB()
-             state=gyms.restoreSelectedGyms()
- }
+         viewModelScope.launch( errorHandler) {
+             state=getAllGyms()
+         }
     }
 
-    private suspend fun getGymsFromRemoteDB() = withContext(Dispatchers.IO){apiService.getGyms() }
+    private suspend fun getAllGyms() = withContext(Dispatchers.IO){
+        try {
+            updateLocalDatabase()
 
+        }
+       catch (ex:Exception){
+         if(gymsDao.getAll().isEmpty()){
+             throw Exception("try connect to internet")
+         }
+       }
+        gymsDao.getAll()
+    }
+
+    private suspend fun updateLocalDatabase() {
+        val gyms = apiService.getGyms()
+        val favouriteGymsList =gymsDao.getFavouriteGyms()
+
+        gymsDao.addAll(gyms)
+        gymsDao.updateAll(
+            favouriteGymsList.map{
+                GymsFavouriteState(id=it.id,true)
+            }
+        )
+    }
 
     fun taggleFavouriteState (gymId:Int){
         val gyms = state.toMutableList()
         val itemIndex = gyms.indexOfFirst { it.id == gymId }
-        gyms[itemIndex] = gyms[itemIndex].copy(isFavourite = ! gyms[itemIndex].isFavourite)
-        storeSelectedGyms(gyms[itemIndex])
-        state =gyms
-    }
 
-
-    private fun storeSelectedGyms(gym:Gym){
-val savedHandleList = stateHandle.get<List<Int>?>(FAV_IDS).orEmpty().toMutableList()
-        if (gym.isFavourite) savedHandleList.add(gym.id)
-        else savedHandleList.remove(gym.id)
-        stateHandle[FAV_IDS] = savedHandleList
-    }
-
-
-    private fun List<Gym>.restoreSelectedGyms(): List<Gym>{
-      //  val gyms =this
-        stateHandle.get<List<Int>?>(FAV_IDS)?.let { savedIds->
-            savedIds.forEach {gymId->
-                this.find { it.id==gymId }?.isFavourite =true
-            }
+        viewModelScope.launch {
+           val updatedGymsList= taggleFavouriteGym( gymId, !gyms[itemIndex].isFavourite)
+            state=updatedGymsList
         }
-        return this
     }
 
-
-    companion object{
-      const val  FAV_IDS = "favourite gyms ids"
+   private suspend fun taggleFavouriteGym(gymId:Int, newFavouriteState: Boolean) = withContext(Dispatchers.IO){
+        gymsDao.update(
+            GymsFavouriteState(
+                id=gymId,
+                isFavourite = newFavouriteState
+            )
+        )
+       return@withContext gymsDao.getAll()
     }
 
 }
