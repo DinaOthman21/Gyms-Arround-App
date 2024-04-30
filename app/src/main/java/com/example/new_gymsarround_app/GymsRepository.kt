@@ -21,18 +21,18 @@ class GymsRepository {
         GymsApplication.getApplicationContext()
     )
 
-     suspend fun taggleFavouriteGym(gymId:Int, newFavouriteState: Boolean) = withContext(
+     suspend fun taggleFavouriteGym(gymId:Int, state: Boolean) = withContext(
         Dispatchers.IO){
         gymsDao.update(
             GymsFavouriteState(
                 id=gymId,
-                isFavourite = newFavouriteState
+                isFavourite = state
             )
         )
-        return@withContext gymsDao.getAll()
+        return@withContext gymsDao.getAll().sortedBy { it.name }
     }
 
-     suspend fun getAllGyms() = withContext(Dispatchers.IO){
+     suspend fun loadGyms() = withContext(Dispatchers.IO){
         try {
             updateLocalDatabase()
         }
@@ -41,7 +41,12 @@ class GymsRepository {
                 throw Exception("try connect to internet")
             }
         }
-        gymsDao.getAll()
+    }
+
+    suspend fun getGyms():List<Gym> {
+        return withContext(Dispatchers.IO){
+            return@withContext gymsDao.getAll()
+        }
     }
 
      suspend fun updateLocalDatabase() {
