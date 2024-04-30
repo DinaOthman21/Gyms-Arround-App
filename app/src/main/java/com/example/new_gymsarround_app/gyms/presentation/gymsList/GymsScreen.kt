@@ -1,4 +1,4 @@
-package com.example.new_gymsarround_app
+package com.example.new_gymsarround_app.gyms.presentation.gymsList
 
 
 import androidx.compose.foundation.Image
@@ -31,10 +31,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.new_gymsarround_app.gyms.domain.Gym
 
 @Composable
 fun GymsScreen(onItemClick: (Int) -> Unit){
-    val vm:GymsViewModel= viewModel ()
+    val vm: GymsViewModel = viewModel ()
     val state=vm.state.value
     Box (
         contentAlignment = Alignment.Center,
@@ -56,7 +57,7 @@ fun GymsScreen(onItemClick: (Int) -> Unit){
 }
 
 @Composable
-fun GymItem(gym :Gym, onFavouriteIconClick:(Int) ->Unit, onItemClick:(Int)->Unit ) {
+fun GymItem(gym : Gym, onFavouriteIconClick:(Int) ->Unit, onItemClick:(Int)->Unit ) {
 
     var isFavouriteState by remember { mutableStateOf(false) }
     val icon = if (gym.isFavourite){
@@ -99,7 +100,7 @@ fun DefaultIcon(icon :ImageVector,
 }
 
 @Composable
-fun GymDetails( gym:Gym ,modifier: Modifier , horizontalAlignment: Alignment.Horizontal= Alignment.Start) {
+fun GymDetails(gym: Gym, modifier: Modifier, horizontalAlignment: Alignment.Horizontal= Alignment.Start) {
 Column(modifier=modifier , horizontalAlignment=horizontalAlignment) {
     Text(
         text = gym.name,

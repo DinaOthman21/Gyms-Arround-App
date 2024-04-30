@@ -1,5 +1,11 @@
-package com.example.new_gymsarround_app
+package com.example.new_gymsarround_app.gyms.data
 
+import com.example.new_gymsarround_app.GymsApplication
+import com.example.new_gymsarround_app.gyms.data.Local.GymsDatabase
+import com.example.new_gymsarround_app.gyms.data.Local.GymsFavouriteState
+import com.example.new_gymsarround_app.gyms.data.Local.LocalGym
+import com.example.new_gymsarround_app.gyms.data.Remote.GymsApiService
+import com.example.new_gymsarround_app.gyms.domain.Gym
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
@@ -7,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class GymsRepository {
 
-    private val apiService:GymsApiService = Retrofit.Builder()
+    private val apiService: GymsApiService = Retrofit.Builder()
         .addConverterFactory(
             GsonConverterFactory.create()
         )
@@ -17,7 +23,7 @@ class GymsRepository {
         .build()
         .create(GymsApiService::class.java)
 
-    private var gymsDao=GymsDatabase.getDaoInstance(
+    private var gymsDao= GymsDatabase.getDaoInstance(
         GymsApplication.getApplicationContext()
     )
 
@@ -45,7 +51,9 @@ class GymsRepository {
 
     suspend fun getGyms():List<Gym> {
         return withContext(Dispatchers.IO){
-            return@withContext gymsDao.getAll()
+            return@withContext gymsDao.getAll().map {
+                Gym(it.id,it.name,it.place,it.isOpen,it.isFavourite)
+            }
         }
     }
 
@@ -53,7 +61,9 @@ class GymsRepository {
         val gyms = apiService.getGyms()
         val favouriteGymsList =gymsDao.getFavouriteGyms()
 
-        gymsDao.addAll(gyms)
+        gymsDao.addAll(gyms.map {
+            LocalGym(it.id,it.name,it.place,it.isOpen)
+        })
         gymsDao.updateAll(
             favouriteGymsList.map{
                 GymsFavouriteState(id=it.id,true)

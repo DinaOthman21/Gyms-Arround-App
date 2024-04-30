@@ -1,4 +1,4 @@
-package com.example.new_gymsarround_app
+package com.example.new_gymsarround_app.gyms.presentation.gymDetails
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,10 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.new_gymsarround_app.gyms.presentation.gymsList.DefaultIcon
+import com.example.new_gymsarround_app.gyms.presentation.gymsList.GymDetails
 
 @Composable
 fun GymDetailsScreen(){
-    val viewModel :GymsDetailsViewModel = viewModel()
+    val viewModel : GymsDetailsViewModel = viewModel()
     val item =viewModel.state
     item?.let{
         Column(horizontalAlignment = Alignment.CenterHorizontally , modifier = Modifier.fillMaxSize().padding(16.dp)){

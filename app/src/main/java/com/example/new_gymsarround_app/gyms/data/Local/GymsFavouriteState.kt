@@ -1,4 +1,4 @@
-package com.example.new_gymsarround_app
+package com.example.new_gymsarround_app.gyms.data.Local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
