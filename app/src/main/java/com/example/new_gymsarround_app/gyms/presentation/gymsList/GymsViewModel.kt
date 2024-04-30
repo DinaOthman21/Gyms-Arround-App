@@ -25,7 +25,7 @@ class GymsViewModel(): ViewModel() {
 
 
     private val getInitialGymsUseCase = GetInitialGymsUseCase()
-    private val taggleFavouriteState= TaggleFavouriteStateUseCase()
+    private val taggleFavouriteStateUseCase= TaggleFavouriteStateUseCase()
 
     private val errorHandler = CoroutineExceptionHandler{ _, throwable ->
       throwable.printStackTrace()
@@ -50,14 +50,12 @@ class GymsViewModel(): ViewModel() {
          }
     }
 
-    fun taggleFavouriteState (gymId:Int){
-        val gyms = _state.gyms.toMutableList()
-        val itemIndex = gyms.indexOfFirst { it.id == gymId }
-
+    fun taggleFavouriteState (gymId:Int, oldvalue:Boolean){
         viewModelScope.launch {
-            val updatedGymsList= taggleFavouriteState(gymId,gyms[itemIndex].isFavourite)
-            _state= _state.copy(gyms=updatedGymsList)
+            val updatedGymsList= taggleFavouriteStateUseCase(gymId,oldvalue)
+            _state= _state.copy(gyms= updatedGymsList)
         }
     }
+
 
 }

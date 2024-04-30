@@ -34,9 +34,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.new_gymsarround_app.gyms.domain.Gym
 
 @Composable
-fun GymsScreen(onItemClick: (Int) -> Unit){
-    val vm: GymsViewModel = viewModel ()
-    val state=vm.state.value
+fun GymsScreen(
+    state:GymsScreenState,
+    onItemClick: (Int) -> Unit ,
+    onFavouriteIconClick: (id:Int,oldvalue:Boolean) ->  Unit
+){
     Box (
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
@@ -46,7 +48,7 @@ fun GymsScreen(onItemClick: (Int) -> Unit){
             items(state.gyms) {gym->
                 GymItem(
                     gym=gym,
-                    onFavouriteIconClick ={ vm.taggleFavouriteState(it) },
+                    onFavouriteIconClick ={id,oldvalue -> onFavouriteIconClick(id,oldvalue) },
                     onItemClick = { id-> onItemClick(id)}
                 )
             }
@@ -57,7 +59,7 @@ fun GymsScreen(onItemClick: (Int) -> Unit){
 }
 
 @Composable
-fun GymItem(gym : Gym, onFavouriteIconClick:(Int) ->Unit, onItemClick:(Int)->Unit ) {
+fun GymItem(gym : Gym, onFavouriteIconClick:(Int,Boolean) ->Unit, onItemClick:(Int)->Unit ) {
 
     var isFavouriteState by remember { mutableStateOf(false) }
     val icon = if (gym.isFavourite){
@@ -76,7 +78,7 @@ fun GymItem(gym : Gym, onFavouriteIconClick:(Int) ->Unit, onItemClick:(Int)->Uni
            // Spacer(modifier = Modifier.width(10.dp))
             GymDetails( gym, Modifier.weight(.70f))
             DefaultIcon(icon ,Modifier.weight(.15f),"Favourite gym icon") {
-                onFavouriteIconClick(gym.id)}
+                onFavouriteIconClick(gym.id,gym.isFavourite)}
         }
     }
 }
@@ -116,13 +118,3 @@ Column(modifier=modifier , horizontalAlignment=horizontalAlignment) {
 }
 }
 
-
-
-/*
-@Preview(name="p1",showBackground = true , showSystemUi = true)
-@Composable
-fun GymsScreenPreview(){
- New_GymsArround_AppTheme {
-     GymsScreen()
- }
-}*/

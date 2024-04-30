@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.new_gymsarround_app.gyms.presentation.gymDetails.GymDetailsScreen
 import com.example.new_gymsarround_app.gyms.presentation.gymsList.GymsScreen
+import com.example.new_gymsarround_app.gyms.presentation.gymsList.GymsViewModel
 import com.example.new_gymsarround_app.ui.theme.New_GymsArround_AppTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,9 +33,13 @@ fun GymsArroundApp(){
     NavHost(navController = navController, startDestination = "gyms"  ){
 
         composable(route="gyms"){
-            GymsScreen {  id->
-                navController.navigate("gyms/$id")
+            val vm:GymsViewModel= viewModel()
+            GymsScreen(state=vm.state.value,
+                onItemClick ={  id-> navController.navigate("gyms/$id") },
+                onFavouriteIconClick = {id,oldvalue->
+                    vm.taggleFavouriteState(id,oldvalue)
                 }
+                )
             }
 
 
