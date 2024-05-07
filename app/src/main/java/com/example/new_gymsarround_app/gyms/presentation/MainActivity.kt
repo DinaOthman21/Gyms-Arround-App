@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,6 +14,9 @@ import com.example.new_gymsarround_app.gyms.presentation.gymDetails.GymDetailsSc
 import com.example.new_gymsarround_app.gyms.presentation.gymsList.GymsScreen
 import com.example.new_gymsarround_app.gyms.presentation.gymsList.GymsViewModel
 import com.example.new_gymsarround_app.ui.theme.New_GymsArround_AppTheme
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +36,7 @@ fun GymsArroundApp(){
     NavHost(navController = navController, startDestination = "gyms"  ){
 
         composable(route="gyms"){
-            val vm:GymsViewModel= viewModel()
+            val vm:GymsViewModel= hiltViewModel()
             GymsScreen(state=vm.state.value,
                 onItemClick ={  id-> navController.navigate("gyms/$id") },
                 onFavouriteIconClick = {id,oldvalue->
@@ -60,9 +63,3 @@ fun GymsArroundApp(){
 
 
 
-/*
-@Preview(name="p1",showBackground = true , showSystemUi = true)
-@Composable
-fun PreviewSection(){
-
-}*/

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("kotlin-kapt")
+    id ("com.google.dagger.hilt.android")
 }
 
 android {
@@ -82,6 +83,16 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
 
+    //hilt
+    implementation ("com.google.dagger:hilt-android:2.46")
+    kapt ("com.google.dagger:hilt-compiler:2.46")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
 
 
+
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes= true
 }

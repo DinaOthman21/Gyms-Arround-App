@@ -9,11 +9,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.new_gymsarround_app.gyms.domain.GetInitialGymsUseCase
 import com.example.new_gymsarround_app.gyms.domain.TaggleFavouriteStateUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class GymsViewModel(): ViewModel() {
+@HiltViewModel
+class GymsViewModel @Inject constructor(
+    private val getInitialGymsUseCase : GetInitialGymsUseCase,
+    private val taggleFavouriteStateUseCase: TaggleFavouriteStateUseCase): ViewModel() {
    private var _state by mutableStateOf( GymsScreenState(
         gyms = emptyList(),
         isLoading = true
@@ -24,8 +29,6 @@ class GymsViewModel(): ViewModel() {
         get()= derivedStateOf { _state }
 
 
-    private val getInitialGymsUseCase = GetInitialGymsUseCase()
-    private val taggleFavouriteStateUseCase= TaggleFavouriteStateUseCase()
 
     private val errorHandler = CoroutineExceptionHandler{ _, throwable ->
       throwable.printStackTrace()
