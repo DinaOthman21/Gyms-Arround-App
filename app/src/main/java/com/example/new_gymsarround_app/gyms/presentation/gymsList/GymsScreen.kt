@@ -28,10 +28,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.new_gymsarround_app.gyms.domain.Gym
+import com.example.new_gymsarround_app.gyms.presentation.SemanticDescription
 
 @Composable
 fun GymsScreen(
@@ -53,7 +56,11 @@ fun GymsScreen(
                 )
             }
         }
-        if(state.isLoading) CircularProgressIndicator()
+        if(state.isLoading) CircularProgressIndicator(
+            Modifier.semantics{
+                this.contentDescription= SemanticDescription.Gyms_List_Loadind
+            }
+        )
         if(state.error!= null) Text(state.error)
     }
 }
