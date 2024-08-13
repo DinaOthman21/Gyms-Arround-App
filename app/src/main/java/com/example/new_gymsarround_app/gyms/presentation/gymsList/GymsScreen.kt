@@ -19,10 +19,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +28,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.new_gymsarround_app.gyms.domain.Gym
 import com.example.new_gymsarround_app.gyms.presentation.SemanticDescription
 
@@ -40,18 +35,18 @@ import com.example.new_gymsarround_app.gyms.presentation.SemanticDescription
 fun GymsScreen(
     state:GymsScreenState,
     onItemClick: (Int) -> Unit ,
-    onFavouriteIconClick: (id:Int,oldvalue:Boolean) ->  Unit
+    onFavouriteIconClick: (id:Int, oldValue:Boolean) ->  Unit
 ){
     Box (
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
     )
     {
-        LazyColumn() {
+        LazyColumn {
             items(state.gyms) {gym->
                 GymItem(
                     gym=gym,
-                    onFavouriteIconClick ={id,oldvalue -> onFavouriteIconClick(id,oldvalue) },
+                    onFavouriteIconClick ={id,oldValue -> onFavouriteIconClick(id,oldValue) },
                     onItemClick = { id-> onItemClick(id)}
                 )
             }
@@ -68,7 +63,7 @@ fun GymsScreen(
 @Composable
 fun GymItem(gym : Gym, onFavouriteIconClick:(Int,Boolean) ->Unit, onItemClick:(Int)->Unit ) {
 
-    var isFavouriteState by remember { mutableStateOf(false) }
+
     val icon = if (gym.isFavourite){
         Icons.Filled.Favorite
     } else{
