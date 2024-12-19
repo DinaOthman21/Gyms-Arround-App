@@ -17,11 +17,11 @@ class GymsRepository @Inject constructor(
 ){
 
 
-     suspend fun taggleFavouriteGym(gymId:Int, state: Boolean) = withContext(
+     suspend fun taggleFavouriteGym(gym: Gym, state: Boolean) = withContext(
         Dispatchers.IO){
         gymsDao.update(
             GymsFavouriteState(
-                id=gymId,
+                id=gym.id,
                 isFavourite = state
             )
         )
@@ -47,7 +47,7 @@ class GymsRepository @Inject constructor(
         }
     }
 
-     suspend fun updateLocalDatabase() {
+    private suspend fun updateLocalDatabase() {
         val gyms = apiService.getGyms()
         val favouriteGymsList =gymsDao.getFavouriteGyms()
 

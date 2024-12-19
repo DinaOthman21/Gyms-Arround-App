@@ -11,27 +11,39 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.new_gymsarround_app.gyms.presentation.gymsList.DefaultIcon
-import com.example.new_gymsarround_app.gyms.presentation.gymsList.GymDetails
+import com.example.new_gymsarround_app.gyms.domain.Gym
+import com.example.new_gymsarround_app.gyms.presentation.common.DefaultIcon
 
 @Composable
-fun GymDetailsScreen(){
-    val viewModel : GymsDetailsViewModel = viewModel()
-    val item =viewModel.state
-    item?.let{
-        Column(horizontalAlignment = Alignment.CenterHorizontally , modifier = Modifier.fillMaxSize().padding(16.dp)){
-            DefaultIcon(icon =Icons.Filled.Place ,
-                modifier = Modifier.padding(bottom = 32.dp,top=32.dp),
-                contentDescription ="location Icon" )
-            GymDetails(gym = it,
-                modifier = Modifier.padding(bottom = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally)
-            Text(
-                text= if(item.isOpen) "Gym is Open" else "Gym is Closed",
-                color = if(item.isOpen) Color.Green else Color.Red
-            )
+fun GymDetailsScreen(
+    gym : Gym ,
+){
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        )
+        {
+                DefaultIcon(
+                    icon = Icons.Filled.Place,
+                    modifier = Modifier
+                        .padding(bottom = 32.dp, top = 32.dp),
+                    contentDescription = "location Icon"
+                )
+                GymDetails(
+                    gym = gym,
+                    modifier = Modifier
+                        .padding(bottom = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                )
+                    Text(
+                        text = if (gym.isOpen) "Gym is Open" else "Gym is Closed",
+                        color = if (gym.isOpen) Color.Green else Color.Red
+                    )
+
+
         }
-    }
+
 
 }

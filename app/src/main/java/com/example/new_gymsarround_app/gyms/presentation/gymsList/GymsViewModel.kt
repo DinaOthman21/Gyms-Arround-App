@@ -1,16 +1,14 @@
 package com.example.new_gymsarround_app.gyms.presentation.gymsList
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.new_gymsarround_app.gyms.domain.GetInitialGymsUseCase
+import com.example.new_gymsarround_app.gyms.domain.Gym
 import com.example.new_gymsarround_app.gyms.domain.TaggleFavouriteStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,25 +16,19 @@ import javax.inject.Inject
 @HiltViewModel
 class GymsViewModel @Inject constructor(
     private val getInitialGymsUseCase : GetInitialGymsUseCase,
-    private val taggleFavouriteStateUseCase: TaggleFavouriteStateUseCase): ViewModel() {
-   private var _state by mutableStateOf( GymsScreenState(
-        gyms = emptyList(),
-        isLoading = true
-    )
-   )
+    private val taggleFavouriteStateUseCase: TaggleFavouriteStateUseCase
+): ViewModel() {
 
-    val state:State<GymsScreenState>
-        get()= derivedStateOf { _state }
+    private val _state = MutableStateFlow(GymsScreenState())
+    val state: StateFlow<GymsScreenState> get() = _state
 
-
-
-    private val errorHandler = CoroutineExceptionHandler{ _, throwable ->
-      throwable.printStackTrace()
-        _state=_state.copy(
-            isLoading = false,
-            error = throwable.message
-        )
-    }
+   private val errorHandler = CoroutineExceptionHandler { _, throwable ->
+       throwable.printStackTrace()
+       _state.value = _state.value.copy(
+           isLoading = false,
+           error = throwable.message
+       )
+   }
 
 
     init {
@@ -46,17 +38,17 @@ class GymsViewModel @Inject constructor(
     private fun getGyms(){
          viewModelScope.launch( errorHandler) {
              val recievedGyms=getInitialGymsUseCase()
-             _state=_state.copy(
+             _state.value=_state.value.copy(
                  gyms = recievedGyms,
                  isLoading = false
              )
          }
     }
 
-    fun taggleFavouriteState (gymId:Int, oldvalue:Boolean){
+    fun taggleFavouriteState (gym: Gym){
         viewModelScope.launch {
-            val updatedGymsList= taggleFavouriteStateUseCase(gymId,oldvalue)
-            _state= _state.copy(gyms= updatedGymsList)
+            val updatedGymsList= taggleFavouriteStateUseCase(gym = gym)
+            _state.value= _state.value.copy(gyms= updatedGymsList)
         }
     }
 

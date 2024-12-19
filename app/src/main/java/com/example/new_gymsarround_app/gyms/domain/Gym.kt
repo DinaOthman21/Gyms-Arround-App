@@ -1,6 +1,7 @@
 package com.example.new_gymsarround_app.gyms.domain
 
 import androidx.room.Entity
+import java.io.Serializable
 
 
 @Entity("gyms_table")
@@ -9,4 +10,4 @@ data class Gym(
                 val name: String ,
                 val place :String ,
                 val isOpen: Boolean ,
-                val isFavourite:Boolean=false)
+                val isFavourite:Boolean=false) : Serializable

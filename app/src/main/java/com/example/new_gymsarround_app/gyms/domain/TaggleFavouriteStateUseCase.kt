@@ -8,9 +8,9 @@ class TaggleFavouriteStateUseCase @Inject constructor(
             private val getSortedGymsUseCase : GetSortedGymsUseCase
 ) {
 
-    suspend operator fun invoke(id:Int ,oldstate:Boolean) : List<Gym>{
-        val newstate=oldstate.not()
-        gymsRepository.taggleFavouriteGym(id ,newstate)
+    suspend operator fun invoke(gym: Gym) : List<Gym>{
+        val newstate = gym.isFavourite.not()
+        gymsRepository.taggleFavouriteGym(gym ,newstate)
         return getSortedGymsUseCase()
 
     }
